@@ -1,21 +1,27 @@
+import os
+
 from flask import Flask, send_file, request, jsonify
 from config import UPLOAD_FOLDER
 
 app = Flask(__name__)
 
-@app.route("/login")
-def login():
-    return "<p>login</p>"
-
 @app.route("/health-check")
 def hello_world():
     return "<p>server is running</p>"
 
-@app.route("/time-capsules")
-def time_capsules():
+@app.route("/login", methods=['POST']) # wiht  {username: "user", password: "password"}
+def login():
+    return "<p>login</p>"
+
+@app.route("/<int:family_id>/time-capsule/<int:time_capsule_id>") # with {Authorization: "Bearer token"}
+def time_capsule(family_id, time_capsule_id):
+    return "<p>time capsule</p>"
+
+@app.route("/<int:family_id>/time-capsules") # with {Authorization: "Bearer token"}
+def time_capsules(family_id):
     return "<p>time capsules</p>"
 
-@app.route("/time-capsule/<int:time_capsule_id>")
+@app.route("/time-capsule/<int:time_capsule_id>") # with {Authorization: "Bearer token"}
 def time_capsule(time_capsule_id):
     return "<p>time capsule</p>"
 
@@ -28,6 +34,7 @@ def get_image(image_name):
     
 @app.route('/upload', methods=['POST'])
 def upload_image():
+    # POST /upload {image: file}
     if 'image' not in request.files:
         return jsonify({"error": "No file part"}), 400
 
